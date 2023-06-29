@@ -2,3 +2,7 @@ python-dotenv
 aiogram
 uvicorn
 fastapi
+google-generativeai
+sqlalchemy
+pony
+psycopg2-binary

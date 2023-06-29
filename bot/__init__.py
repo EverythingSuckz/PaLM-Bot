@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from bot.PaLM import PaLMChat
 
 from config import Config
 
@@ -17,6 +18,8 @@ logging.basicConfig(
     datefmt="%Y/%m/%d %H:%M:%S",
     format="[%(asctime)s][%(name)s][%(levelname)s] ==> %(message)s",
 )
+
+palm = PaLMChat(Config.PALM_API_KEY)
 
 client = Bot(token=Config.BOT_TOKEN)
 storage = MemoryStorage()
