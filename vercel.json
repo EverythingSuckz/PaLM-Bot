@@ -1,0 +1,29 @@
+{
+    "env": {
+      "SERVERLESS": "True"
+    },
+    "routes": [
+      {
+        "src": "/",
+        "dest": "/api/root.py"
+      },
+      {
+        "src": "/api/bot/.*",
+        "dest": "/api/bot.py"
+      },
+      {
+        "src": "/updateWebhooks",
+        "dest": "/api/webhooks.py"
+      },
+      {
+        "src": "/api",
+        "dest": "/",
+        "status": 308
+      },
+      {
+        "src": "/api/((?!bot).*)",
+        "dest": "/",
+        "status": 308
+      }
+    ]
+  }
