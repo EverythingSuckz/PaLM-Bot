@@ -1,8 +1,11 @@
 import logging
+from typing import List
 from bot import client, dp, palm
 from aiogram import types, filters
 
 from bot.database import add_user, clear_history
+
+from google.generativeai.types.safety_types import ContentFilterDict
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +71,16 @@ async def send_handler(message: types.Message):
     resp = await palm.get_reponse(user_id=user_id, name=name, message=text)
     if not resp:
         return logger.info("No reponse to %s's message", name)
+    if not resp.last:
+        filers: List[ContentFilterDict] = resp.filters
+        logger.info("No reponse to %s's message", name)
+        if filers:
+            logger.info("Due to the following filters:")
+            for fil in filers:
+                logger.info(f"\t[%s]: %s", fil.get("reason"), fil.get("message"))
+        return add_user(
+            message.from_id, message.from_user.full_name, message.from_user.username
+        )
     try:
         await message.reply(resp.last, parse_mode="Markdown")
     except Exception as e:
