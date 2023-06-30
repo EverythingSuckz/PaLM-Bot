@@ -7,6 +7,8 @@ from bot.database import add_user, clear_history
 
 from google.generativeai.types.safety_types import ContentFilterDict
 
+from config import Config
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +70,7 @@ async def send_handler(message: types.Message):
     await message.answer_chat_action("typing")
     user_id = message.from_id
     name = message.from_user.first_name if message.from_user else message.chat.title
-    resp = await palm.get_reponse(user_id=user_id, name=name, message=text)
+    resp = await palm.get_reponse(user_id=user_id, name=name, message=text, use_async=not Config.SERVERLESS)
     if not resp:
         return logger.info("No reponse to %s's message", name)
     if not resp.last:
