@@ -22,7 +22,7 @@ async def start_cmd(message: types.Message):
 )
 async def help_cmd(message: types.Message):
     await message.answer(
-        f"Just send me <b>anything</b>.", parse_mode=types.ParseMode.HTML
+        f"You can start a conversation with me by texting me <b>anything</b>. If you are looking for chat commands, type\n\n- /start - Get the start message.\n- /help - Get this same message.\n- /about - Get more info about the bot.\n- /clearhistory - Remove all your message history.\n\n<b>Have a great day!</b>", parse_mode=types.ParseMode.HTML
     )
     add_user(
         message.from_user.id, message.from_user.full_name, message.from_user.username
