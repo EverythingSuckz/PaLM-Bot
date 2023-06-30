@@ -14,7 +14,12 @@ app = FastAPI(docs_url=None, redoc_url=None)
 async def on_startup():
     logger.info("Startup")
     await bot.client.set_my_commands(
-        [types.BotCommand(command="/start", description="Start the bot")]
+        [
+            types.BotCommand(command="/start", description="Start the bot"),
+            types.BotCommand(command="/help", description="Help Menu"),
+            types.BotCommand(command="/about", description="About the bot"),
+            types.BotCommand(command="/clearhistory", description="Remove all your message history"),
+        ]
     )
     if Config.SERVERLESS:
         webhook_info = await bot.client.get_webhook_info()
