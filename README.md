@@ -26,11 +26,14 @@ Get your PaLM API key from [here](https://makersuite.google.com/)
 - `DB_NAME` - Database name
 
 # Hosting
-## Vercel
+## Vercel (Pro Plan)
+
+> **Note:** You can use the free plan but the max execution time is 10 seconds which is not enough for big reponses from the API.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEverythingSuckz%2FPaLM-Bot&env=BOT_TOKEN,WEBHOOK_HOST,PALM_API_KEY,DB_USER,DB_PASSWORD,DB_HOST,DB_NAME&envDescription=Check%20out%20the%20readme%20for%20info&envLink=https%3A%2F%2Fgithub.com%2FEverythingSuckz%2FPaLM-Bot%23environment-variables&demo-title=PaLM%20Telegram%20Chat%20Bot&demo-description=A%20small%20bot%20that%20interacts%20with%20Google's%20PaLM%20Chat%20API%20and%20can%20be%20hosted%20on%20serverless%20functions.&demo-url=https%3A%2F%2Ftelegram.dog%2FNotAIChatBot)
 
-> **Note**: After deployment, Goto the `/updateWebhooks?token=\<your bot token\>`  path of your deployed app url to setup webhooks.
+### Post Deployment Steps
+If you've hosted it on webhooks (serverless) then after deployment, Goto the `/updateWebhooks?token=your-bot-token`  path of your deployed app url to setup webhooks.
 > An example will be https://bot-name.vercel.app/updateWebhooks?token=your-bot-token
 
 # Self Hosting
