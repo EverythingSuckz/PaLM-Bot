@@ -6,8 +6,8 @@ from pyrogram import enums, types, filters
 from google.generativeai.types.safety_types import ContentFilterDict
 
 from bot import Bot, palm
-from bot.helpers import limiter
 from bot.database import clear_history
+from bot.helpers import limiter, mentioned
 
 logger = logging.getLogger(__name__)
 
@@ -24,24 +24,11 @@ async def clearhistory_cmd(_, message: types.Message):
     
 
 
-@Bot.on_message(filters.text, group=2)
+@Bot.on_message((filters.text & filters.private) | (filters.text & mentioned & filters.group) & filters.incoming, group=2)
 @limiter(3)
 async def send_handler(_, message: types.Message):
-    if message.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
-        if message.mentioned:
-            text = re.sub(f"@{Bot.me.username}", "", message.text, flags=re.IGNORECASE).strip()
-        else:
-            if not message.reply_to_message:
-                return
-            if not message.reply_to_message.from_user:
-                return
-            if not message.reply_to_message.from_user.id:
-                return
-            text = message.text.strip()
-    elif message.chat.type == enums.ChatType.PRIVATE:
-        text = message.text.strip()
-    else:
-        return
+    text = re.sub(f"@{Bot.me.username}", "", message.text, flags=re.IGNORECASE).strip()
+    text = message.text.strip()
     if text and text.startswith("/"):
         return
     if not text:
