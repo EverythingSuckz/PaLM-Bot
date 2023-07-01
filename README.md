@@ -2,7 +2,7 @@
 A telegram bot that interacts with Google's PaLM Chat API and can be hosted on serverless functions.
 
 > Looking for serverless verson based on aiogram? <br>
-> Check out [this](https://github.com/EverthingSuckz/PaLM-Bot/tree/aiogram) branch.
+> Check out [this](https://github.com/EverythingSuckz/PaLM-Bot/tree/aiogram) branch.
 
 # Demo
 A working demo can be found at [@NotAIChatBot](https://telegram.dog/NotAIChatBot).
