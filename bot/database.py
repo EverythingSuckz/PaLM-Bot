@@ -44,8 +44,11 @@ else:
 
 db.generate_mapping(create_tables=True)
 
+# ==============================================================================
+# https://docs.ponyorm.org/integration_with_fastapi.html#async-and-db-session ||
+# ==============================================================================
 
-def add_user(id: int, name: str, username: Optional[str]):
+async def add_user(id: int, name: str, username: Optional[str]):
     with orm.db_session:
         if not User.exists(id=id):
             try:

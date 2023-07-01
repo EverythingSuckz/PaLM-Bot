@@ -71,17 +71,13 @@ class PaLMChat:
         )
         return messages
 
-    async def get_reponse(self, user_id: int, name: str, message: str, use_async: bool = False) -> ChatResponse:
+
+    async def get_reponse(self, user_id: int, name: str, message: str) -> ChatResponse:
         """
         Get a response from PaLM and save the history.
         """
         # Not using async here is bacause it can cause event loop eror when being hosted on vercel.
         response: ChatResponse = await palm.chat_async(
-            model="models/chat-bison-001",
-            messages=await self._generate_history(user_id, message),
-            examples=EXAMPLES,
-            context=SYSTEM_PROMPT.format(name),
-        ) if not use_async else palm.chat(
             model="models/chat-bison-001",
             messages=await self._generate_history(user_id, message),
             examples=EXAMPLES,

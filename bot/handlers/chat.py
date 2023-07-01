@@ -1,76 +1,55 @@
+import re
 import logging
 from typing import List
-from bot import client, dp, palm
-from aiogram import types, filters
 
-from bot.database import add_user, clear_history
-
+from pyrogram import enums, types, filters
 from google.generativeai.types.safety_types import ContentFilterDict
 
-from config import Config
+from bot import Bot, palm
+from bot.helpers import limiter
+from bot.database import clear_history
 
 logger = logging.getLogger(__name__)
 
+gfn = lambda x: x.first_name + (" " + x.last_name) if x.last_name else ""
 
-def check_bot_mentioned(message: types.Message, username: str):
-    if message.entities:
-        for entity in message.entities:
-            if entity.type == "mention" and (
-                (entity.user and entity.user.id == client.id)
-                or (username in message.text)
-            ):
-                return message.text[entity.offset : entity.offset + entity.length]
-    return False
-
-
-@dp.message_handler(
-    filters.Command(commands=["clearhistory"], prefixes="!/", ignore_case=False)
-)
-async def clearhistory_cmd(message: types.Message):
-    status = await message.answer(
-        "<code>Please wait...</code>", parse_mode=types.ParseMode.HTML
+@Bot.on_message(filters.command("clearhistory") & filters.private)
+@limiter(15)
+async def clearhistory_cmd(_, message: types.Message):
+    status = await message.reply(
+        "<code>Please wait...</code>", parse_mode=enums.ParseMode.HTML
     )
-    await clear_history(message.from_id)
-    await status.edit_text("<b>Done</b>.", parse_mode=types.ParseMode.HTML)
-    add_user(
-        message.from_user.id, message.from_user.full_name, message.from_user.username
-    )
+    await clear_history(message.from_user.id if message.from_user else message.sender_chat.id)
+    await status.edit_text("<b>Done</b>.", parse_mode=enums.ParseMode.HTML)
+    
 
 
-@dp.message_handler(filters.ContentTypeFilter(content_types=types.ContentType.TEXT))
-@dp.throttled(
-    lambda msg, loop, *args, **kwargs: loop.create_task(
-        msg.answer("Too many messages, relax!", parse_mode=types.ParseMode.MARKDOWN)
-    ),
-    rate=1,
-)
-async def send_handler(message: types.Message):
-    if message.chat.type in ("group", "supergroup"):
-        if mentioned := check_bot_mentioned(message, (await client.me).username):
-            logger.info(
-                f"The bot was mentioned in {message.chat.title} by {message.from_user.first_name}"
-            )
-            text = message.text.replace(mentioned, "").strip()
+@Bot.on_message(filters.text, group=2)
+@limiter(3)
+async def send_handler(_, message: types.Message):
+    if message.chat.type in (enums.ChatType.GROUP, enums.ChatType.SUPERGROUP):
+        if message.mentioned:
+            text = re.sub(f"@{Bot.me.username}", "", message.text, flags=re.IGNORECASE).strip()
         else:
             if not message.reply_to_message:
                 return
             if not message.reply_to_message.from_user:
                 return
-            if not message.reply_to_message.from_user.id == client.id:
+            if not message.reply_to_message.from_user.id:
                 return
-            text = message.text
-    elif message.chat.type == "private":
-        text = message.text
+            text = message.text.strip()
+    elif message.chat.type == enums.ChatType.PRIVATE:
+        text = message.text.strip()
     else:
         return
     if text and text.startswith("/"):
         return
     if not text:
         return
-    await message.answer_chat_action("typing")
-    user_id = message.from_id
-    name = message.from_user.first_name if message.from_user else message.chat.title
-    resp = await palm.get_reponse(user_id=user_id, name=name, message=text, use_async=not Config.SERVERLESS)
+    await message.reply_chat_action(enums.ChatAction.TYPING)
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+    name = message.from_user.first_name if message.from_user else message.sender_chat.title
+    resp = await palm.get_reponse(user_id=user_id, name=name, message=text)
     if not resp:
         return logger.info("No reponse to %s's message", name)
     if not resp.last:
@@ -80,15 +59,9 @@ async def send_handler(message: types.Message):
             logger.info("Due to the following filters:")
             for fil in filers:
                 logger.info(f"\t[%s]: %s", fil.get("reason"), fil.get("message"))
-        return add_user(
-            message.from_id, message.from_user.full_name, message.from_user.username
-        )
+        return
     try:
-        await message.reply(resp.last, parse_mode="Markdown")
+        await message.reply(resp.last, parse_mode=enums.ParseMode.MARKDOWN, disable_web_page_preview=True, quote=True)
     except Exception as e:
-        logger.exception(e)
-        await message.reply(resp.last)
-    if message.chat.type == "private":
-        add_user(
-            message.from_id, message.from_user.full_name, message.from_user.username
-        )
+        logger.exception(e, stack_info=True)
+        await message.reply(resp.last, disable_web_page_preview=True, quote=True)

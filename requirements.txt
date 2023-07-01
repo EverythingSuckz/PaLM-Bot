@@ -1,7 +1,6 @@
 python-dotenv
-aiogram
-uvicorn
-fastapi
+pyrogram
+tgcrypto
 google-generativeai
 sqlalchemy
 pony
