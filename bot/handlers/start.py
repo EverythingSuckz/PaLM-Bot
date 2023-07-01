@@ -3,7 +3,7 @@ from pyrogram import Client, filters, types, enums
 from bot.helpers import limiter
 from bot.database import add_user
 
-gfn = lambda x: x.first_name + (" " + x.last_name) if x.last_name else ""
+gfn = lambda x: x.first_name + ((" " + x.last_name) if x.last_name else "")
 
 @Client.on_message(filters.private, group=-1)
 async def log_users(_, message: types.Message):
