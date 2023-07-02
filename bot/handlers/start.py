@@ -1,3 +1,4 @@
+import asyncio
 from pyrogram import Client, filters, types, enums
 
 from bot.helpers import limiter
@@ -7,7 +8,7 @@ gfn = lambda x: x.first_name + ((" " + x.last_name) if x.last_name else "")
 
 @Client.on_message(filters.private, group=-1)
 async def log_users(_, message: types.Message):
-    await add_user(message.from_user.id, gfn(message.from_user), message.from_user.username)
+    asyncio.create_task(add_user(message.from_user.id, gfn(message.from_user), message.from_user.username))
 
 @Client.on_message(filters.command("start") & filters.private)
 @limiter(5)
