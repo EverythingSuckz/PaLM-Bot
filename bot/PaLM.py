@@ -86,11 +86,11 @@ class PaLMChat:
         )
         if not response:
             return
+        await set_user_history(user_id, name, message)
+        await set_response_history(user_id, name, response.last or "*ignores you*")
         if not response.last:
             return response
         response.last = trim_response(response.last)
-        await set_user_history(user_id, name, message)
-        await set_response_history(user_id, name, response.last)
         self.logger.debug("Generated response for user[%d]", user_id)
         self.logger.debug(response)
         return response

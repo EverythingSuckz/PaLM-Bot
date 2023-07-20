@@ -38,9 +38,11 @@ async def send_handler(_, message: types.Message):
     name = message.from_user.first_name if message.from_user else message.sender_chat.title
     resp = await palm.get_reponse(user_id=user_id, name=name, message=text)
     if not resp:
+        await message.reply("<i>*AI did not repond*</i>")
         return logger.info("No reponse to %s's message", name)
     if not resp.last:
         filers: List[ContentFilterDict] = resp.filters
+        await message.reply("<i>*ignores you*</i>")
         logger.info("No reponse to %s's message", name)
         if filers:
             logger.info("Due to the following filters:")
