@@ -1,4 +1,5 @@
 import logging
+import sys
 
 from pyrogram import Client
 
@@ -9,6 +10,10 @@ logging.basicConfig(
     level=logging.INFO,
     datefmt="%Y/%m/%d %H:%M:%S",
     format="[%(asctime)s][%(name)s][%(levelname)s] ==> %(message)s",
+    handlers=[
+        logging.FileHandler("bot.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
 )
 
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
