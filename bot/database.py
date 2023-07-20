@@ -15,7 +15,7 @@ class User(db.Entity):
     __table__ = "users"
     id = orm.PrimaryKey(int, size=64)
     name = orm.Required(str)
-    username = orm.Optional(str)
+    username = orm.Optional(str, nullable=True)
     started_at = orm.Required(datetime, default=datetime.utcnow)
 
 
