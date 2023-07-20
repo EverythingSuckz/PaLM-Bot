@@ -6,6 +6,7 @@ import google.generativeai as palm
 from google.generativeai.types.discuss_types import ChatResponse
 
 from bot.database import get_history, set_response_history, set_user_history
+from bot.helpers import trim_response
 
 
 EXAMPLES = [
@@ -87,6 +88,7 @@ class PaLMChat:
             return
         if not response.last:
             return response
+        response.last = trim_response(response.last)
         await set_user_history(user_id, name, message)
         await set_response_history(user_id, name, response.last)
         self.logger.debug("Generated response for user[%d]", user_id)

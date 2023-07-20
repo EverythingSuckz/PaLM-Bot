@@ -6,6 +6,10 @@ from pyrogram import types, filters, enums
 logger = logging.getLogger(__name__)
 
 
+# The PaLM API acts weird sometimes so q quick lazy fix for it
+def trim_response(text: str) -> str:
+    return text[:text.find("USER:") or len(text)].strip()
+
 # This filter is used to check if the message has bot mentioned in it.
 async def mentioned_filter(_, __, message: types.Message):
     if message.mentioned:
@@ -39,10 +43,6 @@ def limiter(rate_limit_seconds: float) -> Callable:
                 cache[user_id] = True
         return wrapper
     return decorator
-
-
-
-
 
 
 
