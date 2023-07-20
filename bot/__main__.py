@@ -24,6 +24,7 @@ async def main():
     )
     logging.info("Bot started as @%s.", bot.me.username)
     await idle()
+    await bot.stop()
 
 if __name__ == "__main__":
     asyncio.run(main())
