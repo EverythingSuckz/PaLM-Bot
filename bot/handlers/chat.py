@@ -11,7 +11,7 @@ from bot.helpers import limiter, mentioned
 
 logger = logging.getLogger(__name__)
 
-gfn = lambda x: x.first_name + (" " + x.last_name) if x.last_name else ""
+gfn = lambda x: f"{x.first_name} {x.last_name}" if x.last_name else ""
 
 @Bot.on_message(filters.command("clearhistory") & filters.private)
 @limiter(15)
