@@ -14,11 +14,10 @@ def trim_response(text: str) -> str:
 async def mentioned_filter(_, __, message: types.Message):
     if message.mentioned:
         return True
-    else:
-        if message.entities:
-            for ent in message.entities:
-                if ent.type == enums.MessageEntityType.MENTION:
-                    return f"@{message._client.me.username}" in message.text
+    if message.entities:
+        for ent in message.entities:
+            if ent.type == enums.MessageEntityType.MENTION:
+                return f"@{message._client.me.username}" in message.text
 
 mentioned = filters.create(mentioned_filter)
 

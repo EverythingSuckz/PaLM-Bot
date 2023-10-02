@@ -4,7 +4,7 @@ from pyrogram import Client, filters, types, enums
 from bot.helpers import limiter
 from bot.database import add_user
 
-gfn = lambda x: x.first_name + ((" " + x.last_name) if x.last_name else "")
+gfn = lambda x: x.first_name + (f" {x.last_name}" if x.last_name else "")
 
 @Client.on_message(filters.private, group=-1)
 async def log_users(_, message: types.Message):
@@ -34,7 +34,7 @@ async def about_cmd(_, message: types.Message):
         types.InlineKeyboardButton(text="Source Code", url="https://github.com/EverythingSuckz/PaLM-bot"),
     ]])
     await message.reply(
-        f"I'm a <b>conversational bot</b> powerd by <b>Google's PaLM API</b>.",
+        "I'm a <b>conversational bot</b> powerd by <b>Google's PaLM API</b>.",
         parse_mode=enums.ParseMode.HTML,
         reply_markup=markup,
     )

@@ -62,13 +62,12 @@ logger.info("Local Database configured.")
 
 with orm.db_session:
     for user in RemoteUser.select():
-        local_user = LocalUser.get(id=user.id)
-        if not local_user:
-            LocalUser(id=user.id, name=user.name, username=user.username, started_at=user.started_at)
-        else:
+        if local_user := LocalUser.get(id=user.id):
             local_user.name = user.name
             local_user.username = user.username or None
             local_user.started_at = user.started_at
+        else:
+            LocalUser(id=user.id, name=user.name, username=user.username, started_at=user.started_at)
     orm.commit()
 
 logger.info("Users transferred.")

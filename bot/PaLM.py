@@ -56,14 +56,13 @@ class PaLMChat:
         self.logger.debug(
             "Found total %d histories for user[%d]", len(list(histories)), user_id
         )
-        messages = []
-        for history in histories:
-            messages.append(
-                {
-                    "author": history.author,
-                    "content": history.message,
-                }
-            )
+        messages = [
+            {
+                "author": history.author,
+                "content": history.message,
+            }
+            for history in histories
+        ]
         messages.append(
             {
                 "author": "user",
